@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "esper-thesis"
+version = "1.0.0"
+description = "Semantic Research Management & Academic Organization System — part of ESPER-STACK"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+  { name="The Cyrano de Bergerac Foundation" },
+  { name="John Jacob Weber II", email="contact@example.com" }
+]
+
+keywords = [
+  "research",
+  "semantic",
+  "literacy",
+  "esper-stack",
+  "pictogram",
+  "chrono",
+  "vse",
+  "analysis",
+  "ai",
+  "education",
+  "academic",
+  "thesis"
+]
+
+classifiers = [
+    # Development Status
+    "Development Status :: 4 - Beta",
+
+    # Intended Audience
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+
+    # License
+    "License :: OSI Approved :: MIT License",
+
+    # Python Versions
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+
+    # Topics
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Text Processing :: Linguistic",
+    "Topic :: Education",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+
+    # OS
+    "Operating System :: OS Independent",
+
+    # Environment
+    "Environment :: Console",
+]
+
+# Zero dependencies — pure Python
+dependencies = []
+
+[project.urls]
+"Homepage" = "https://github.com/PaniclandUSA/Esper-Thesis"
+"Documentation" = "https://github.com/PaniclandUSA/Esper-Thesis#readme"
+"Source" = "https://github.com/PaniclandUSA/Esper-Thesis"
+"Issues" = "https://github.com/PaniclandUSA/Esper-Thesis/issues"
+
+[project.scripts]
+esper-thesis = "esper_thesis.cli:main"
+
+[tool.setuptools]
+packages = ["esper_thesis"]
+
+[tool.setuptools.package-data]
+esper_thesis = ["py.typed"]
