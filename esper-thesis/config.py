@@ -1,71 +1,197 @@
-# esper_thesis/config.py
+"""
+Configuration and database location resolution for ESPER-THESIS.
+
+Implements four-level priority cascade:
+1. Explicit CLI argument (--database)
+2. Environment variable (ESPER_THESIS_DB)
+3. Config file (~/.esper_thesis/config.json)
+4. Default (./research_db.json)
+"""
 
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Optional
 
-__all__ = ["__version__", "get_config_dir", "load_config", "get_database_path"]
+__version__ = "1.0.0"
 
-__version__ = "1.0.0"  # keep your version here
-
-CONFIG_DIR_NAME = ".esper_thesis"
-CONFIG_FILE_NAME = "config.json"
-ENV_DB_VAR = "ESPER_THESIS_DB"
-DEFAULT_DB_NAME = "research_db.json"
+DEFAULT_DATABASE = "research_db.json"
+CONFIG_DIR = Path.home() / ".esper_thesis"
+CONFIG_FILE = CONFIG_DIR / "config.json"
+ENV_VAR = "ESPER_THESIS_DB"
 
 
-def get_config_dir() -> Path:
-    """Return the user-level config directory (~/.esper_thesis)."""
-    return Path.home() / CONFIG_DIR_NAME
-
-
-def load_config() -> Dict[str, Any]:
-    """Load config JSON from ~/.esper_thesis/config.json if present."""
-    config_path = get_config_dir() / CONFIG_FILE_NAME
-    if not config_path.exists():
-        return {}
-    try:
-        return json.loads(config_path.read_text(encoding="utf-8"))
-    except Exception:
-        # Fail closed: if config is malformed, ignore it
-        return {}
-
-
-def get_database_path(args) -> Path:
+def get_database_path(
+    cli_path: Optional[str] = None,
+    project: Optional[str] = None
+) -> Path:
     """
-    Resolve database path with priority cascade:
-
-    1. CLI argument: --database /path/to/db.json
-    2. Environment variable: ESPER_THESIS_DB
-    3. Config file (~/.esper_thesis/config.json):
-       - project mapping via --project
-       - default_database
-    4. Default: ./research_db.json (current directory)
+    Resolve database path using priority cascade.
+    
+    Priority order:
+    1. Explicit CLI argument (highest)
+    2. Environment variable
+    3. Config file (default or project-specific)
+    4. Default: ./research_db.json
+    
+    Args:
+        cli_path: Path from --database CLI argument
+        project: Project name from --project CLI argument
+    
+    Returns:
+        Resolved Path object
+    
+    Examples:
+        # Explicit path
+        >>> get_database_path(cli_path="~/research/main.json")
+        PosixPath('/home/user/research/main.json')
+        
+        # Environment variable
+        >>> os.environ['ESPER_THESIS_DB'] = '~/global.json'
+        >>> get_database_path()
+        PosixPath('/home/user/global.json')
+        
+        # Config file project
+        >>> get_database_path(project='literacy')
+        PosixPath('/home/user/projects/literacy/research.json')
+        
+        # Default
+        >>> get_database_path()
+        PosixPath('research_db.json')
     """
-    # 1. CLI argument
-    if getattr(args, "database", None):
-        return Path(args.database).expanduser()
-
+    
+    # 1. Explicit CLI argument (highest priority)
+    if cli_path:
+        return Path(cli_path).expanduser().resolve()
+    
     # 2. Environment variable
-    env_db = os.getenv(ENV_DB_VAR)
-    if env_db:
-        return Path(env_db).expanduser()
-
+    if env_path := os.getenv(ENV_VAR):
+        return Path(env_path).expanduser().resolve()
+    
     # 3. Config file
-    config = load_config()
-    project = getattr(args, "project", None)
+    if CONFIG_FILE.exists():
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+            
+            # 3a. Project-specific database
+            if project and 'projects' in config:
+                if project in config['projects']:
+                    project_path = config['projects'][project]
+                    return Path(project_path).expanduser().resolve()
+                else:
+                    # Project specified but not found - list available
+                    available = ', '.join(config['projects'].keys())
+                    raise ValueError(
+                        f"Project '{project}' not found in config. "
+                        f"Available projects: {available}"
+                    )
+            
+            # 3b. Default database from config
+            if 'default_database' in config:
+                default_path = config['default_database']
+                return Path(default_path).expanduser().resolve()
+        
+        except json.JSONDecodeError:
+            # Config file exists but invalid - warn and fall through
+            import warnings
+            warnings.warn(
+                f"Config file {CONFIG_FILE} is invalid JSON. Using default database."
+            )
+    
+    # 4. Default: local file
+    return Path(DEFAULT_DATABASE)
 
-    # Project mapping
-    if project and "projects" in config:
-        project_map = config.get("projects", {})
-        if project in project_map:
-            return Path(project_map[project]).expanduser()
 
-    # Default database in config
-    default_db = config.get("default_database")
-    if default_db:
-        return Path(default_db).expanduser()
+def create_config_template():
+    """
+    Create template config file if it doesn't exist.
+    
+    Creates ~/.esper_thesis/config.json with example structure.
+    """
+    
+    if CONFIG_FILE.exists():
+        print(f"Config file already exists: {CONFIG_FILE}")
+        return
+    
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    
+    template = {
+        "default_database": None,  # null = use local ./research_db.json
+        "projects": {
+            "example": "~/research/example-project.json"
+        }
+    }
+    
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(template, f, indent=2)
+    
+    print(f"Created config template: {CONFIG_FILE}")
+    print("\nEdit this file to configure:")
+    print("  - default_database: Global research database path")
+    print("  - projects: Named project-specific databases")
 
-    # 4. Default: local JSON in current directory
-    return Path(DEFAULT_DB_NAME)
+
+def show_config():
+    """Display current configuration and resolution behavior."""
+    
+    print("=" * 60)
+    print("ESPER-THESIS Configuration")
+    print("=" * 60)
+    print()
+    
+    # Show resolution order
+    print("Database Resolution Order:")
+    print("  1. CLI argument:    --database <path>")
+    print(f"  2. Environment var: {ENV_VAR}")
+    print(f"  3. Config file:     {CONFIG_FILE}")
+    print(f"  4. Default:         {DEFAULT_DATABASE}")
+    print()
+    
+    # Show current environment
+    print("Current Environment:")
+    env_value = os.getenv(ENV_VAR)
+    print(f"  {ENV_VAR} = {env_value if env_value else '(not set)'}")
+    print()
+    
+    # Show config file
+    print("Config File:")
+    if CONFIG_FILE.exists():
+        print(f"  Location: {CONFIG_FILE}")
+        print(f"  Status:   Exists")
+        
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+            
+            print(f"  Default:  {config.get('default_database', '(not set)')}")
+            
+            if projects := config.get('projects', {}):
+                print(f"  Projects: {len(projects)} configured")
+                for name, path in projects.items():
+                    print(f"    - {name}: {path}")
+            else:
+                print("  Projects: None configured")
+        
+        except json.JSONDecodeError:
+            print("  Status:   INVALID JSON")
+    else:
+        print(f"  Location: {CONFIG_FILE}")
+        print("  Status:   Not found")
+        print("\n  Run 'esper-thesis config init' to create template")
+    print()
+    
+    # Show what would be used
+    print("Current Resolution:")
+    path = get_database_path()
+    print(f"  Database: {path}")
+    print(f"  Absolute: {path.resolve()}")
+    print(f"  Exists:   {path.exists()}")
+    print()
+    
+    print("=" * 60)
+
+
+def get_version() -> str:
+    """Return ESPER-THESIS version string."""
+    return __version__
