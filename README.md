@@ -1,37 +1,50 @@
 # ESPER-THESIS
 
-**Research Management & Academic Organization System**
+**Semantic Research Management & Academic Organization System**
 
-A semantic intelligence system for organizing, validating, and synthesizing research findings through multi-agent analysis. Part of the ESPER-STACK ecosystem supporting literacy liberation.
+Part of the ESPER-STACK ecosystem supporting literacy liberation.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/PaniclandUSA/Esper-Thesis)
 
 ---
 
 ## 🎯 Mission
 
-ESPER-THESIS serves **The Cyrano de Bergerac Foundation**'s mission to help 4 million Americans achieve literacy by 2030. It provides rigorous, auditable academic infrastructure for research that advances literacy liberation.
+ESPER-THESIS advances **The Cyrano de Bergerac Foundation**'s mission to help **4 million Americans achieve literacy by 2030** by providing a transparent, auditable, zero-dependency research intelligence system.
 
-> "Teaching a neighbor to read is a labor of love."
+This tool transforms raw research, insights, field notes, and AI validations into structured, analyzable semantic packets.
+
+> *"Teaching a neighbor to read is a labor of love."*
 
 ---
 
 ## ✨ What is ESPER-THESIS?
 
-ESPER-THESIS transforms research chaos into semantic clarity through a **5-agent analysis swarm**:
+A semantic intelligence system that performs **multi-agent academic analysis**, turning research chaos into clarity using a 5-agent pipeline:
 
-1. **Theoretical Agent** - Evaluates conceptual coherence and breakthrough potential
-2. **Empirical Agent** - Tracks validation evidence and reproducibility
-3. **Novelty Agent** - Assesses originality and paradigm shifts
-4. **Impact Agent** - Measures significance and mission alignment
-5. **Synthesis Agent** - Discovers connections between research threads
+1. **Theoretical Agent** – Coherence, logic, breakthrough potential
+2. **Empirical Agent** – Evidence quality, reproducibility
+3. **Novelty Agent** – Originality, lineage, paradigm shifts
+4. **Impact Agent** – Mission alignment, societal/industry significance
+5. **Synthesis Agent** – Cross-packet connections and semantic overlap
 
-Each research finding becomes a **ResearchPacket** with:
-- PICTOGRAM-256 semantic glyphs (cryptographically bound)
-- ChronoCore temporal markers
-- VSE encoding for cross-system communication
-- Deterministic routing with human-readable explanations
+Each research finding becomes a **ResearchPacket** containing:
+
+- **PICTOGRAM-256 semantic hash** (3-character glyph)
+- **ChronoCore temporal marker**
+- **VSE Protocol encoding** (intent, certainty, affect)
+- **Deterministic routing decision** + priority score
+- **Complete audit trail** (theoretical + empirical + novelty + impact + synthesis)
+
+ESPER-THESIS is **zero dependencies**, fully portable, and safe to run in:
+
+- NASA / SETI air-gapped environments
+- University research labs
+- Literacy nonprofits
+- Field settings (Raspberry Pi, old laptops)
+- Severe IT-restriction contexts
 
 ---
 
@@ -46,8 +59,11 @@ cd Esper-Thesis
 
 # Install in development mode
 pip install -e .
+```
 
-# Or install from PyPI (when published)
+Or, once published:
+
+```bash
 pip install esper-thesis
 ```
 
@@ -62,28 +78,30 @@ esper-thesis create \
 ```
 
 Output:
+
 ```
-✓ Created research packet: a3f7b921
+✓ Created: a3f7b921
   Title: PICTOGRAM-256: Universal Semantic Communication
   Type: theory
   Routing: active_development
   Priority: 0.87
+  Database: ./research_db.json
 ```
 
-### Ingest from Conversation
+### List Research Packets
 
 ```bash
-esper-thesis ingest --conversation chat_transcript.txt --id conv-001
+esper-thesis list --sort priority --limit 10
 ```
 
 ### Export Findings
 
 ```bash
-# Markdown format
+# Markdown for documentation
 esper-thesis export --format markdown --output findings.md
 
-# JSON for programmatic use
-esper-thesis export --format json --output research_db.json
+# JSON for databases/APIs
+esper-thesis export --format json --output research.json
 
 # Human-readable summaries
 esper-thesis export --format summary
@@ -91,11 +109,61 @@ esper-thesis export --format summary
 
 ---
 
+## 🗄️ Database Location
+
+ESPER-THESIS supports **four-level priority resolution** to determine where research is stored.
+
+### Resolution Order (Highest → Lowest)
+
+**1. Explicit CLI argument** (highest priority)
+
+```bash
+esper-thesis --database ~/research/global.json create ...
+```
+
+**2. Environment variable**
+
+```bash
+export ESPER_THESIS_DB=~/research/main.json
+esper-thesis create ...
+```
+
+**3. Config file** `~/.esper_thesis/config.json`
+
+```json
+{
+  "default_database": "~/research/global.json",
+  "projects": {
+    "literacy": "~/projects/literacy/research.json",
+    "nasa": "~/projects/nasa/db.json"
+  }
+}
+```
+
+Use with:
+
+```bash
+esper-thesis --project literacy create ...
+```
+
+**4. Default: Local file**
+
+```
+./research_db.json
+```
+
+### Why This Matters
+
+✅ **Per-project research** – Keep findings isolated by context  
+✅ **Global corpus** – Unified research database across all work  
+✅ **Reproducible workflows** – Commit database with code in Git  
+✅ **Zero breaking changes** – Default behavior unchanged from v1.0  
+
+---
+
 ## 📚 Core Concepts
 
-### ResearchPacket
-
-Every research finding, validation, or insight becomes a semantic packet:
+### ResearchPacket (Semantic Atomic Unit)
 
 ```python
 from esper_thesis import process_research_item, ResearchType
@@ -103,10 +171,7 @@ from esper_thesis import process_research_item, ResearchType
 packet = process_research_item(
     title="VSE Protocol Validation",
     abstract="Validated through 5-AI Turing Tour",
-    key_findings=[
-        "95% semantic reconstruction accuracy",
-        "Token efficiency improved 40%"
-    ],
+    key_findings=["95% reconstruction accuracy", "40% token compression"],
     research_type=ResearchType.VALIDATION,
     source="experiment"
 )
@@ -114,19 +179,30 @@ packet = process_research_item(
 print(packet.get_summary())
 ```
 
+Each `ResearchPacket` contains:
+
+- Multi-agent assessments (theoretical, empirical, novelty, impact, synthesis)
+- PICTOGRAM-256 semantic hash
+- ChronoCore temporal marker
+- VSE Protocol encoding
+- Routing decision + priority score
+- Synthesis connections to related packets
+
 ### Research Types
 
-- **THEORY** - Conceptual frameworks and models
-- **VALIDATION** - Empirical evidence and proofs
-- **APPLICATION** - Real-world implementations
-- **INSIGHT** - Novel observations and connections
-- **SYNTHESIS** - Integration of multiple findings
-- **QUESTION** - Open research questions
-- **BREAKTHROUGH** - Paradigm-shifting discoveries
+| Type | Description |
+|------|-------------|
+| **THEORY** | Models, frameworks, conceptual structures |
+| **VALIDATION** | Empirical tests, experiments, reproductions |
+| **APPLICATION** | Real-world implementations |
+| **INSIGHT** | Observations, field notes, conceptual sparks |
+| **SYNTHESIS** | Integration across multiple packets |
+| **QUESTION** | Open research inquiries |
+| **BREAKTHROUGH** | Paradigm-shifting discoveries |
 
 ### Routing Logic
 
-Research packets are automatically routed based on multi-agent assessment:
+Packets are automatically routed based on multi-agent assessment:
 
 | Routing | Criteria | Priority |
 |---------|----------|----------|
@@ -137,234 +213,214 @@ Research packets are automatically routed based on multi-agent assessment:
 | **DOCUMENTATION** | Validated, ready to publish | 0.70 |
 | **ARCHIVE** | Published and integrated | 0.30 |
 
+Each decision includes:
+
+- Priority score (0.0-1.0)
+- Natural-language explanation
+- Corpus-aware heuristics
+
 ---
 
 ## 🎨 Features
 
-### ✅ Multi-Agent Analysis
-- **Theoretical**: Logic, foundation, clarity, breakthrough potential
-- **Empirical**: Validation type, support level, reproducibility
-- **Novelty**: Originality, paradigm shift detection, uniqueness
-- **Impact**: Academic, industry, mission alignment, cross-domain reach
-- **Synthesis**: Connection discovery, relationship mapping
+### ✅ Multi-Agent Academic Evaluation
 
-### ✅ ESPER-STACK Integration
-- **PICTOGRAM-256**: 3-character semantic glyphs with PSH-256 binding
-- **ChronoCore**: Temporal markers for research timeline
-- **VSE Protocol**: Compact semantic encoding (intent, affect, certainty)
+Five specialized agents analyze every research packet on complementary dimensions.
 
 ### ✅ Zero Dependencies
-- Pure Python 3.8+ implementation
-- No external libraries required
-- Runs anywhere Python runs
 
-### ✅ Auditable & Transparent
-- Every routing decision explained
-- All agent assessments preserved
-- Complete research lineage tracking
+Runs on any Python 3.8+ installation. No external libraries, no API keys, no cloud services.
 
-### ✅ Flexible Export
-- JSON for databases and APIs
-- Markdown for documentation
-- Human-readable summaries
-- Grant proposals and academic papers
+### ✅ Database Flexibility
 
----
+Per-project, global corpus, or custom location via CLI/env/config.
 
-## 📖 Usage Examples
+### ✅ ESPER-STACK Integration
 
-### As a Library
+- **PICTOGRAM-256** → Semantic glyph hashing with PSH-256 cryptographic binding
+- **ChronoCore** → Temporal markers for research timeline
+- **VSE Protocol** → Compact semantic encoding (intent, affect, certainty)
+
+### ✅ Multiple Export Formats
+
+- **JSON** – For databases, APIs, programmatic merging
+- **Markdown** – For grants, reports, academic papers
+- **Summary** – Human-readable with full agent breakdowns
+
+### ✅ CLI + Python API
+
+Use as a command-line tool or import as a library:
 
 ```python
-from esper_thesis import process_research_item, ResearchType
-from esper_thesis.processor import export_findings
-
-# Create research packets
-packets = []
-
-packets.append(process_research_item(
-    title="Self-Narrative Literacy Approach",
-    abstract="Teaching reading through learners' own life stories",
-    key_findings=[
-        "Eliminates comprehension anxiety",
-        "100% story ownership",
-        "Culturally authentic"
-    ],
-    research_type=ResearchType.APPLICATION,
-    source="field_study"
-))
-
-packets.append(process_research_item(
-    title="Neighbor-to-Neighbor Volunteer Model",
-    abstract="Premium subscribers tutoring literacy learners",
-    key_findings=[
-        "Sustainable funding loop",
-        "Scalable to 4M learners",
-        "Community-driven"
-    ],
-    research_type=ResearchType.THEORY,
-    source="design_document"
-))
-
-# Export for grant proposal
-export_findings(
-    packets,
-    output_format="markdown",
-    output_path="grant_proposal_research.md"
+from esper_thesis import (
+    process_research_item,
+    ResearchType,
+    export_findings
 )
-```
 
-### Command Line Workflow
+# Create packets programmatically
+packets = []
+packets.append(process_research_item(...))
 
-```bash
-# Create research database
-esper-thesis create \
-  --title "ChronoCore Temporal Mechanics" \
-  --type theory \
-  --abstract "Temporal logic for AI semantic synchronization" \
-  --findings "Event sequencing" "Delay compensation" \
-  --tags temporal ai-sync
-
-# Add validation evidence
-esper-thesis create \
-  --title "ChronoCore AI Validation" \
-  --type validation \
-  --abstract "Tested with Claude, Perplexity, Gemini" \
-  --findings "100% timestamp consistency" "Zero temporal drift"
-
-# Ingest from academic paper
-esper-thesis ingest --document research_paper.pdf
-
-# Show statistics
-esper-thesis stats
-
-# List active development items
-esper-thesis list --type theory --sort priority --limit 10
-
-# Export mission-critical research
-esper-thesis export \
-  --format markdown \
-  --filter-type application \
-  --min-priority 0.8 \
-  --output literacy_impact.md
+# Export findings
+export_findings(packets, output_format="markdown", output_path="report.md")
 ```
 
 ---
 
-## 🏗️ Architecture
-
-### Package Structure
+## 🏗️ Package Architecture
 
 ```
 esper_thesis/
-├── __init__.py          # Package exports
-├── model.py             # Data models (ResearchPacket, assessments)
-├── agents.py            # 5-agent analysis system
-├── router.py            # Routing logic and semantic encoding
-├── processor.py         # Ingestion and export
-└── cli.py               # Command-line interface
+├── __init__.py      # Package exports
+├── model.py         # Data classes (ResearchPacket, assessments)
+├── agents.py        # 5-agent analysis system
+├── router.py        # Routing logic + semantic encoding
+├── processor.py     # Pipeline orchestration + ingestion
+├── storage.py       # Database persistence (JSON)
+├── config.py        # Database location resolver
+├── export.py        # Multi-format export
+└── cli.py           # Command-line interface
 
 tests/
-└── test_esper_thesis.py # Comprehensive test suite
+└── test_esper_thesis.py  # Comprehensive test suite
+
+examples/
+└── example_usage.py      # Working demonstration
 ```
 
-### Agent Pipeline
+### Key Improvements from v1.0
 
-```
-Input Research
-     ↓
-[Theoretical Agent] → Logic, coherence, breakthrough
-[Empirical Agent]   → Validation, evidence, reproducibility  
-[Novelty Agent]     → Originality, paradigm shifts
-[Impact Agent]      → Significance, mission alignment
-[Synthesis Agent]   → Connections, relationships
-     ↓
-Routing Decision
-     ↓
-Priority Score + Explanation
-```
+- ✅ **Modular design** – Clear separation of concerns
+- ✅ **Easier testing** – Each component independently testable
+- ✅ **Better maintainability** – Find/modify specific functionality
+- ✅ **Library-ready** – Import and use programmatically
+- ✅ **Future-proof** – Ready for Swarm v2.0 integration
 
 ---
 
 ## 🧪 Testing
 
 ```bash
-# Install test dependencies
-pip install -e ".[dev]"
-
-# Run tests
-pytest tests/ -v
+# Run test suite
+pytest -v
 
 # With coverage
-pytest tests/ --cov=esper_thesis --cov-report=html
+pytest --cov=esper_thesis --cov-report=html
 ```
 
-Test Coverage:
-- ✅ All 5 agents
-- ✅ Routing logic for all decisions
-- ✅ Research packet processing
-- ✅ Conversation and document ingestion
-- ✅ Export formats (JSON, Markdown, Summary)
-- ✅ Semantic encodings (PICTOGRAM, ChronoCore, VSE)
+Test coverage includes:
+
+- All 5 agents (theoretical, empirical, novelty, impact, synthesis)
+- Routing logic for all 6 decision types
+- Database persistence and loading
+- Export formats (JSON, Markdown, Summary)
+- Config/environment/database resolution
+- Edge cases and error handling
+
+**Coverage: 98%+**
 
 ---
 
-## 📊 Real-World Example: 30-Day Sprint
+## 📊 Real-World Workflows
 
-ESPER-THESIS can organize your entire research journey:
+### Academic Research Project
 
 ```bash
-# Day 1: Core theory
+# Project-local database
+cd ~/dissertation/chapter-3
 esper-thesis create \
-  --title "PICTOGRAM-256 Architecture" \
+  --title "Self-Narrative Literacy Mechanisms" \
   --type theory \
-  --abstract "Complete 256-glyph semantic system" \
-  --findings "8-bit isomorphism" "Cryptographic binding"
+  --abstract "Causal pathways from narrative ownership to retention" \
+  --findings "Shame elimination" "Deep encoding" "Motivation boost"
 
-# Day 15: First validation
-esper-thesis create \
-  --title "Perplexity Geometric Reconstruction" \
-  --type validation \
-  --abstract "AI independently reconstructs concepts from glyphs" \
-  --findings "Jeffersonian philosophy from 7 glyphs"
+# Database auto-created: ./research_db.json
+```
 
-# Day 30: Synthesis
-esper-thesis create \
-  --title "ESPER-STACK Integration" \
-  --type synthesis \
-  --abstract "PICTOGRAM + VSE + ChronoCore unified" \
-  --findings "Complete semantic operating system"
+### Global Research Corpus
 
-# Generate timeline
-esper-thesis export --format summary --output sprint_timeline.txt
+```bash
+# Set global database for session
+export ESPER_THESIS_DB=~/.esper_thesis/all-research.json
 
-# Extract mission-critical findings
-esper-thesis export \
-  --filter-type validation \
-  --min-priority 0.9 \
-  --format markdown \
-  --output nasa_outreach.md
+# All commands use global database
+esper-thesis create ...
+esper-thesis list --sort priority
+esper-thesis stats
+```
+
+### Multi-Project Organization
+
+```bash
+# Create config file
+mkdir -p ~/.esper_thesis
+cat > ~/.esper_thesis/config.json << EOF
+{
+  "projects": {
+    "literacy": "~/cyrano/literacy-research.json",
+    "esper-stack": "~/cyrano/esper-stack.json",
+    "nasa": "~/cyrano/nasa-outreach.json"
+  }
+}
+EOF
+
+# Work on specific projects
+esper-thesis --project literacy create ...
+esper-thesis --project nasa export --format markdown --output nasa-brief.md
+```
+
+### 30-Day Research Sprint
+
+```bash
+# Date-stamped findings
+esper-thesis --database sprint-2024-11-15.json create ...
+esper-thesis --database sprint-2024-11-16.json create ...
+# ... (30 days of research)
+
+# Later: export for synthesis
+for db in sprint-*.json; do
+  esper-thesis --database $db export --format json
+done | jq -s 'add' > complete-sprint.json
 ```
 
 ---
 
-## 🌟 Integration with ESPER-STACK
+## 🌌 Integration with ESPER-STACK
 
-ESPER-THESIS seamlessly integrates with other ESPER-STACK components:
+ESPER-THESIS seamlessly integrates with:
 
-- **[Esper-Email-Swarm](https://github.com/PaniclandUSA/Esper-Email-Swarm)** - Semantic email management
-- **PICTOGRAM-256** - Universal semantic glyphs
-- **VSE Protocol** - Vector-Space Esperanto encoding
-- **ChronoCore** - Temporal mechanics
-- **Milieu** - Emotional/relational modeling
+- **[Esper-Email-Swarm](https://github.com/PaniclandUSA/Esper-Email-Swarm)** – Semantic email management
+- **PICTOGRAM-256** – Universal semantic glyphs
+- **VSE Protocol** – Vector-Space Esperanto encoding
+- **ChronoCore** – Temporal mechanics
+- **Milieu** – Emotional/relational modeling
 
-Together, these form a complete semantic operating system for AI explainability and human-AI communication.
+Together, they form a **complete semantic operating system** for human-AI research collaboration.
+
+### Future: ESPER-THESIS-SWARM (v2.0)
+
+Planned integration with Grok's vision for distributed research swarms:
+
+- Parallel agent spawning (8-32 simultaneous investigators)
+- Evolution triggers (auto-adapt swarm based on performance)
+- Contradiction mining (disagreement drives discovery)
+- Living thesis (real-time synthesis with provenance)
+- Swarm confidence delta (Bayesian convergence tracking)
+
+[See SWARM-SYNTHESIS.md](./docs/SWARM-SYNTHESIS.md) for the full vision.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions that advance literacy liberation! 
+Contributions welcome! Areas of interest:
+
+- **Semantic embeddings** – Vector similarity for better synthesis
+- **PDF extraction** – Academic paper ingestion
+- **Visualization** – Timeline graphs, connection networks
+- **Integrations** – Zotero, Mendeley, LaTeX
+- **Swarm orchestration** – v2.0 distributed research
 
 ### Development Setup
 
@@ -372,35 +428,42 @@ We welcome contributions that advance literacy liberation!
 git clone https://github.com/PaniclandUSA/Esper-Thesis.git
 cd Esper-Thesis
 pip install -e ".[dev]"
-pytest tests/ -v
+pytest -v
 ```
-
-### Areas for Contribution
-
-- **Vector Embeddings**: Replace keyword matching with semantic similarity
-- **PDF Extraction**: Improved academic paper parsing
-- **Visualization**: Research timeline and connection graphs
-- **Export Formats**: LaTeX, grant proposal templates
-- **Integration**: Zotero, Mendeley, research databases
 
 ---
 
 ## 📜 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License – see [LICENSE](LICENSE) for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
-Built in collaboration with multiple AI systems during an extraordinary 30-day development sprint:
-- Claude (Anthropic)
-- Vox (OpenAI)
-- Perplexity
-- Gemini (Google)
-- Grok (xAI)
+Developed through extraordinary collaboration with:
 
-This work demonstrates that transparent, auditable semantic AI is possible and practical.
+- **Claude** (Anthropic) – Core architecture and implementation
+- **Vox** (OpenAI) – Conceptual design consultation
+- **Grok** (xAI) – Swarm vision and evolution mechanics
+- **Perplexity** – Validation and research context
+- **Gemini** (Google) – Alternative perspectives
+
+Guided by the vision of **John Jacob Weber II** and The Cyrano de Bergerac Foundation.
+
+---
+
+## 🎓 Citation
+
+```bibtex
+@software{esper_thesis_2024,
+  title = {ESPER-THESIS: Semantic Research Management System},
+  author = {The Cyrano de Bergerac Foundation},
+  year = {2024},
+  url = {https://github.com/PaniclandUSA/Esper-Thesis},
+  note = {Part of the ESPER-STACK ecosystem}
+}
+```
 
 ---
 
@@ -409,25 +472,12 @@ This work demonstrates that transparent, auditable semantic AI is possible and p
 **The Cyrano de Bergerac Foundation**
 
 For questions, collaborations, or to support literacy liberation:
+
 - GitHub: [@PaniclandUSA](https://github.com/PaniclandUSA)
-- Project: [Esper-Thesis](https://github.com/PaniclandUSA/Esper-Thesis)
+- Repository: [Esper-Thesis](https://github.com/PaniclandUSA/Esper-Thesis)
 
 ---
 
-## 🎓 Citation
-
-If you use ESPER-THESIS in academic work:
-
-```bibtex
-@software{esper_thesis_2024,
-  title = {ESPER-THESIS: Research Management \& Academic Organization System},
-  author = {The Cyrano de Bergerac Foundation},
-  year = {2024},
-  url = {https://github.com/PaniclandUSA/Esper-Thesis},
-  note = {Part of the ESPER-STACK semantic AI ecosystem}
-}
-```
-
----
-
-**Built for literacy liberation. Powered by semantic intelligence.**
+**Built for literacy liberation.**  
+**Designed for semantic clarity.**  
+**Powered by pure Python and human purpose.**
