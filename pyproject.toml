@@ -76,7 +76,7 @@ dependencies = []
 esper-thesis = "esper_thesis.cli:main"
 
 [tool.setuptools]
-packages = ["esper_thesis"]
+package-dir = {"" = "src"}
 
-[tool.setuptools.package-data]
-esper_thesis = ["py.typed"]
+[tool.setuptools.packages.find]
+where = ["src"]
